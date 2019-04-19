@@ -10,8 +10,8 @@ class Database:
         self.pathname = pathname
 
     def store(self, obj):
-        header = f'{obj.type} {len(obj.data)}\0'.encode()
-        content = header + obj.data
+        header = f'{obj.type} {len(obj.content)}\0'.encode()
+        content = header + obj.content
         obj.oid = sha1(content).hexdigest()
         self.write_object(obj.oid, content)
 

@@ -1,5 +1,3 @@
-import os
-
 
 class Blob:
 
@@ -12,9 +10,5 @@ class Blob:
         return 'blob'
 
     @property
-    def oid(self):
-        return self._oid
-
-    @oid.setter
-    def oid(self, value):
-        self._oid = value
+    def content(self):
+        return self.data
