@@ -27,11 +27,14 @@ when "commit"
   root_path = Pathname.new(Dir.getwd)
   git_path = root_path.join(".git")
   db_path = git_path.join("objects")
+
   workspace = Workspace.new(root_path)
   database = Database.new(db_path)
+
   workspace.list_files.each do |path|
     data = workspace.read_file(path)
     blob = Blob.new(data)
+
     database.store(blob)
   end
 else
