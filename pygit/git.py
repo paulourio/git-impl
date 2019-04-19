@@ -15,7 +15,7 @@ if command == 'init':
     for dirname in ['objects', 'refs']:
         try:
             git_path.joinpath(dirname).mkdir(parents=True, exist_ok=False)
-        except FileExistsError as err:
+        except Exception as err:
             print(f'Fatal: {err}', file=sys.stderr)
             sys.exit(1)
 
