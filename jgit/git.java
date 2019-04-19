@@ -15,7 +15,11 @@ class GitInterface {
             String[] dirnames = {"objects", "refs"};
             for (String dirname : dirnames) {
                 File dir = git_path.resolve(dirname).toFile();
-                dir.mkdirs();
+                Boolean created = dir.mkdirs();
+                if (!created) {
+                    System.err.println("fatal: could not create " + dir);
+                    System.exit(1);
+                }
             }
             System.out.println(
                 "Initialized empty git repository in " + git_path
