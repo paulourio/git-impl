@@ -20,6 +20,19 @@ if command == 'init':
             sys.exit(1)
 
     print(f'Initialized empty git repository in {git_path}')
+elif command == 'commit':
+    from blob import Blob
+    from database import Database
+    from workspace import Workspace
+    root_path = os.getcwd()
+    db_path = os.path.join(root_path, '.git', 'objects')
+
+    workspace = Workspace(os.getcwd())
+    database = Database(db_path)
+    for name in workspace.list_files():
+        data = workspace.read_file(name)
+        blob = Blob(data)
+        database.store(blob)
 else:
     print(f'git: {command!r} is not a git command.', file=sys.stderr)
     sys.exit(1)
