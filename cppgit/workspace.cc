@@ -28,14 +28,14 @@ const_buffer Workspace::ReadFile(string path) const {
 
   auto fname = std::filesystem::path(pathname_) / path;
 
-  basic_ifstream<unsigned char> file;
+  basic_ifstream<char> file;
   file.open(fname, ios::ate | ios::binary);
   streamsize size = file.tellg();
   file.seekg(0, ios::beg);
 
-  vector<unsigned char> buffer(size);
-  file.read(buffer.data(), size);
-  return {buffer.data(), buffer.size()};
+  char* buffer = new char[size];
+  file.read(buffer, size);
+  return {buffer, static_cast<size_t>(size)};
 }
 
 }  // namespace git

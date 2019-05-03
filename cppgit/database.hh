@@ -1,6 +1,7 @@
 #ifndef _DATABASE_H_
 #define _DATABASE_H_
 
+#include <sstream>
 #include <string>
 
 #include "./object.hh"
@@ -17,7 +18,7 @@ class Database {
   void Store(Object& object) const;
 
  private:
-  void writeObject(const string& hex, stringstream& content) const;
+  void writeObject(const string& hex, stringstream& content, size_t size) const;
 
   string pathname_;
 };

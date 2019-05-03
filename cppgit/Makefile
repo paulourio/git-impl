@@ -1,11 +1,13 @@
 
-CPP_FILES = command.cc database.cc git.cc workspace.cc
+CPP_FILES = author.cc command.cc commit.cc database.cc date.cc git.cc \
+			tree.cc workspace.cc
 OBJECT_FILES = $(CPP_FILES:.cc=.o)
-HEADER_FILES = blob.hh database.hh git.hh object.hh ustring.hh workspace.hh
+HEADER_FILES = author.hh blob.hh commit.hh database.hh date.hh entry.hh \
+			   git.hh object.hh tree.hh workspace.hh
 
 CXX = clang++
 CXXFLAGS = -std=c++17 -g
-LDFLAGS = -lstdc++fs -lboost_iostreams -lboost_filesystem
+LDFLAGS = -lstdc++fs -lboost_iostreams -lboost_filesystem -lz
 
 .PHONY: init commit clean lint
 

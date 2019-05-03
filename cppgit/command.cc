@@ -1,9 +1,17 @@
+#include <cstdlib>
+#include <ctime>
 #include <filesystem>
+#include <fstream>
+#include <iterator>
 #include <iostream>
 #include <string>
 
+#include "./author.hh"
 #include "./blob.hh"
+#include "./commit.hh"
 #include "./database.hh"
+#include "./entry.hh"
+#include "./tree.hh"
 #include "./workspace.hh"
 
 namespace fs = std::filesystem;
@@ -11,8 +19,7 @@ namespace fs = std::filesystem;
 namespace git {
 
 void command(int argc, const char** argv) {
-  using std::cin, std::cout, std::cerr, std::endl;
-  using std::string;
+  using namespace std;
 
   string command(argv[1]);
 
@@ -26,7 +33,7 @@ void command(int argc, const char** argv) {
       }
 
       cerr << "Initialized empty git repository in " << git_path << endl;
-    } catch (std::filesystem::filesystem_error& e) {
+    } catch (fs::filesystem_error& e) {
       cerr << "fatal: " << e.what() << endl;
     }
   } else if (command == "commit") {
@@ -36,12 +43,37 @@ void command(int argc, const char** argv) {
 
     auto ws = Workspace(root_path);
     auto database = Database(db_path);
+    auto tree = Tree();
     for (auto& path : ws.ListFiles()) {
       auto content = ws.ReadFile(path);
       auto blob = Blob(content);
       database.Store(blob);
+      content.data();
+      tree.add_entry({fs::relative(path), blob.oid()});
+      delete const_cast<void*>(content.data());
     }
+    database.Store(tree);
 
+    auto name = std::getenv("GIT_AUTHOR_NAME");
+    auto email = std::getenv("GIT_AUTHOR_EMAIL");
+    time_t now;
+    time(&now);
+    auto author = Author(name, email, now);
+
+    cin >> std::noskipws;
+    istream_iterator<char> it(cin);
+    istream_iterator<char> end;
+    string message(it, end);
+
+    auto commit = Commit(tree.hex(), author, message);
+    database.Store(commit);
+
+    ofstream head;
+    head.open(git_path / "HEAD");
+    head << commit.hex();
+    head.close();
+
+    cout << "[(root-commit) " << commit.hex() << "] " << message << endl;
   } else {
     cerr << "git: '" << command << "' is not a git command." << endl;
     exit(1);
